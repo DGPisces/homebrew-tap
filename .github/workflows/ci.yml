@@ -1,0 +1,40 @@
+name: ci
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: /bin/bash --noprofile --norc -eo pipefail {0}
+
+jobs:
+  cask:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit cask
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: "1"
+          HOMEBREW_NO_INSTALL_FROM_API: "1"
+        run: brew audit --cask --new Casks/bough.rb
+      - name: Style cask
+        run: brew style Casks/bough.rb
+      - name: Install smoke
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: "1"
+          HOMEBREW_NO_INSTALL_FROM_API: "1"
+        run: |
+          brew install --cask --no-quarantine Casks/bough.rb
+          test -d /Applications/Bough.app
+          brew uninstall --cask bough
+
