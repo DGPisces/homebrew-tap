@@ -22,11 +22,16 @@ jobs:
     runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
+      - name: Register tap
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: "1"
+          HOMEBREW_NO_INSTALL_FROM_API: "1"
+        run: brew tap DGPisces/tap "$PWD"
       - name: Audit cask
         env:
           HOMEBREW_NO_AUTO_UPDATE: "1"
           HOMEBREW_NO_INSTALL_FROM_API: "1"
-        run: brew audit --cask --new Casks/bough.rb
+        run: brew audit --cask DGPisces/tap/bough
       - name: Style cask
         run: brew style Casks/bough.rb
       - name: Install smoke
@@ -34,7 +39,6 @@ jobs:
           HOMEBREW_NO_AUTO_UPDATE: "1"
           HOMEBREW_NO_INSTALL_FROM_API: "1"
         run: |
-          brew install --cask --no-quarantine Casks/bough.rb
+          brew install --cask DGPisces/tap/bough
           test -d /Applications/Bough.app
-          brew uninstall --cask bough
-
+          brew uninstall --cask DGPisces/tap/bough
