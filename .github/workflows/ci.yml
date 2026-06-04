@@ -26,7 +26,7 @@ jobs:
         env:
           HOMEBREW_NO_AUTO_UPDATE: "1"
           HOMEBREW_NO_INSTALL_FROM_API: "1"
-        run: brew audit --cask --new Casks/bough.rb
+        run: brew audit --cask --new bough
       - name: Style cask
         run: brew style Casks/bough.rb
       - name: Install smoke
@@ -37,4 +37,3 @@ jobs:
           brew install --cask --no-quarantine Casks/bough.rb
           test -d /Applications/Bough.app
           brew uninstall --cask bough
-
