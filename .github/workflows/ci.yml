@@ -28,7 +28,7 @@ jobs:
           HOMEBREW_NO_INSTALL_FROM_API: "1"
         run: |
           brew tap DGPisces/tap "$PWD"
-          brew audit --cask --new DGPisces/tap/bough
+          brew audit --cask DGPisces/tap/bough
       - name: Style cask
         run: brew style Casks/bough.rb
       - name: Install smoke
