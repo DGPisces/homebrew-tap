@@ -1,0 +1,36 @@
+# Opens the manual-review cask-update PR when the bough release workflow
+# pushes a bough-v* branch through the "bough-release tap publisher" deploy
+# key. github.token in the bough repo cannot create PRs here and PATs expire,
+# so PR creation lives on this side with the repo's own token.
+name: auto-pr
+
+on:
+  push:
+    branches:
+      - "bough-v*"
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  open-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Open manual-review PR for cask update
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          existing="$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$GITHUB_REF_NAME" --state open --json url --jq '.[0].url // empty')"
+          if [ -n "$existing" ]; then
+            echo "PR already exists: $existing"
+            exit 0
+          fi
+          tag="${GITHUB_REF_NAME#bough-}"
+          gh pr create \
+            --repo "$GITHUB_REPOSITORY" \
+            --base main \
+            --head "$GITHUB_REF_NAME" \
+            --title "Update Bough to ${tag}" \
+            --body "$(printf 'Automated cask update pushed by the bough release workflow.\n\n- DMG: https://github.com/DGPisces/bough/releases/download/%s/Bough-%s.dmg\n\nVerify the version and SHA-256 against the GitHub release before merging. Manual merge required.' "$tag" "$tag")"
