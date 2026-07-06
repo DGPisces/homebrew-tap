@@ -1,6 +1,6 @@
 cask "bough" do
-  version "1.0.6"
-  sha256 "8ceaf8745ccb63f8c4ec3d064af88445d41593baf9842723bb55d3aa9aac367d"
+  version "1.1.1"
+  sha256 "eca42a218baffae12c6f80685607c1ffaa0ab52ad04fc027432a35056980114f"
 
   url "https://github.com/DGPisces/bough/releases/download/v#{version}/Bough-v#{version}.dmg"
   name "Bough"
